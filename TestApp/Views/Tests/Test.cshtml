@@ -1,0 +1,54 @@
+﻿@model TestApp.Test
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>@Html.DisplayNameFor(model => model.Name)</h1>
+<form asp-action="Test">
+    <input type="number" value="@Model.Id" id="model" name="model" hidden/>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Вопрос
+                </th>
+                <th>
+                    Вариант 1
+                </th>
+                <th>
+                    Вариант 2
+                </th>
+                <th>
+                    Вариант 3
+                </th>
+                <th>
+                    Ответ
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Question item in Model.Questions)
+            {
+                <tr>
+                    <td>
+                        @item.Questionbody
+                    </td>
+                    <td>
+                        @item.Answer1
+                    </td>
+                    <td>
+                        @item.Answer2
+                    </td>
+                    <td>
+                        @item.Answer3
+                    </td>
+                    <td>
+                        <input type="number" id="ans" name="ans" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="submit" value="Submit" class="btn btn-primary" />
+</form>

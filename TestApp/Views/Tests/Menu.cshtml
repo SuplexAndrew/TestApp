@@ -1,0 +1,41 @@
+﻿@model IEnumerable<TestApp.Test>
+
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<h1>Menu</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Дата создания</th>
+            <th>Количество вопросов</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Creationdate.Date)
+                </td>
+                <td>
+                    @item.Questions.Count()
+                </td>
+                <td>
+                    <a asp-action="Test" asp-route-id="@item.Id">Выполнить</a>
+                </td>
+                <td>
+                    <a asp-action="Statistics" asp-route-id="@item.Id">Статистика</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-action="Results">Результаты</a>

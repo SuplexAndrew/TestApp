@@ -1,0 +1,33 @@
+﻿@model TestApp.Test
+
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<h1>Statistics</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Вопрос</th>
+            <th>Количество правильных</th>
+            <th>Количество неправильных</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Questions)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Questionbody)
+                </td>
+                <td>
+                    @item.Answers.Where(x => x.Value == item.Rigthanswer).Count()
+                </td>
+                <td>
+                    @item.Answers.Where(x => x.Value != item.Rigthanswer).Count()
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
