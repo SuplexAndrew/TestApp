@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace TestApp.Controllers
 {
@@ -19,7 +17,8 @@ namespace TestApp.Controllers
         [Authorize]
         public IActionResult Menu()
         {
-            return View(db.Tests.Include(x => x.Questions));
+            ViewData["UserId"] = db.People.FirstOrDefault(x => x.Name == User.Identity.Name).Id;
+            return View(db.Tests.Include(x => x.Questions).Include(x => x.Completedtests).ThenInclude(x => x.Person));
         }
         public IActionResult Test(int id)
         {
@@ -32,18 +31,32 @@ namespace TestApp.Controllers
             var ans = (collection["ans"]).Select(x => int.Parse(x)).ToArray();
             Test _test = db.Tests.Include(x => x.Questions).FirstOrDefault(x => x.Id == int.Parse(collection["model"]));
             var _que = db.Questions.Where(x => x.Testid == _test.Id).ToArray();
-            Completedtest c = new Completedtest() {Date = DateTime.Now, Testid = _test.Id, 
-                Personid=db.People.FirstOrDefault(x => x.Email == User.Identity.Name).Id};
+            Completedtest c = new Completedtest()
+            {
+                Date = DateTime.Now,
+                Testid = _test.Id,
+                Personid = db.People.FirstOrDefault(x => x.Name == User.Identity.Name).Id
+            };
             db.Completedtests.Add(c);
             db.SaveChanges();
             c = db.Completedtests.OrderByDescending(p => p.Id).FirstOrDefault();
             for (int i = 0; i < ans.Length; i++)
             {
-                Answer a = new Answer() { Completedtestid = c.Id, Questionid = _que[i].Id, Value=ans[i]};
+                Answer a = new Answer() { Completedtestid = c.Id, Questionid = _que[i].Id, Value = ans[i] };
                 db.Answers.Add(a);
             }
             db.SaveChanges();
             return RedirectToAction(nameof(Menu));
+        }
+        public IActionResult CompletedTest(int id)
+        {
+            var test = db.Completedtests
+                .Include(x => x.Answers)
+                .ThenInclude(x => x.Question)
+                .Include(x => x.Test)
+                .Include(x => x.Person)
+                .FirstOrDefault(x => x.Id == id);
+            return View(test);
         }
         [Authorize]
         public IActionResult Results()

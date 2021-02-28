@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -31,7 +30,7 @@ namespace TestApp.Controllers
                 Person person = db.People.FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
                 if (person != null)
                 {
-                    await Authenticate(model.Email);
+                    await Authenticate(person.Name);
 
                     return RedirectToAction("Menu", "Tests");
                 }
@@ -56,7 +55,7 @@ namespace TestApp.Controllers
                     db.People.Add(new Person { Name = model.Name, Email = model.Email, Password = model.Password });
                     await db.SaveChangesAsync();
 
-                    await Authenticate(model.Email);
+                    await Authenticate(model.Name);
 
                     return RedirectToAction("Tests", "Menu");
                 }
